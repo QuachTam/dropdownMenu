@@ -8,6 +8,8 @@
 
 #import "MainViewController.h"
 #import "DropDownMenuViewController.h"
+#import "DropDownMenuModel.h"
+#import "DropDownMenuEntity.h"
 
 @interface MainViewController ()
 
@@ -24,86 +26,114 @@
     return self;
 }
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
-    [self actionDropDown];
-}
 #pragma Start DropDown menu
-- (void)initDropDown{
-    // stype 1:
-//    NSArray *arrayLableLeft = @[@"menu 1", @"menu 2", @"menu 3", @"menu 4", @"menu 5", @"menu 6", @"menu 7", @"menu 8", @"menu 9"];
-//    NSArray *arrayLableRight = nil;//@[@"1", @"2", @"2563"];
-//    [self initDropDownLeft:[NSMutableArray arrayWithArray:arrayLableLeft] arrayDropDownRight:[NSMutableArray arrayWithArray:arrayLableRight] isCheckMark:NO isCenter:NO];
 
-    // stype 2:
-//    NSArray *arrayLableLeft = @[@"menu 1", @"menu 2", @"menu 3", @"menu 4", @"menu 5", @"menu 6", @"menu 7", @"menu 8", @"menu 9"];
-//    NSArray *arrayLableRight = @[@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9"];
-//    [self initDropDownLeft:[NSMutableArray arrayWithArray:arrayLableLeft] arrayDropDownRight:[NSMutableArray arrayWithArray:arrayLableRight] isCheckMark:NO isCenter:NO];
-
-    // stype 3:
-    NSArray *arrayLableLeft = @[@"menu 1", @"menu 2", @"menu 3", @"menu 4", @"menu 5", @"menu 6", @"menu 7", @"menu 8", @"menu 9"];
-     NSArray *arrayLableRight = nil;
-     [self initDropDownLeft:[NSMutableArray arrayWithArray:arrayLableLeft] arrayDropDownRight:[NSMutableArray arrayWithArray:arrayLableRight] isCheckMark:YES isCenter:YES];
+- (void)setRightButtonItem{
+    UIButton *rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 30)];
+    rightButton.tag = 0;
+    [rightButton setImage:[UIImage imageNamed:@"bt_more_action.png"] forState:UIControlStateNormal];
+    [rightButton addTarget:self action:@selector(actionDrop:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *barRightButtonItem = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
+    
+    UIButton *pdfButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 30, 31)];
+    pdfButton.tag = 1;
+    [pdfButton setImage:[UIImage imageNamed:@"bt_pdf.png"] forState:UIControlStateNormal];
+    [pdfButton addTarget:self action:@selector(actionDrop:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *pdfButtonItem = [[UIBarButtonItem alloc] initWithCustomView:pdfButton];
+    
+    self.navigationItem.rightBarButtonItems = @[barRightButtonItem, pdfButtonItem];
 }
 
-- (void)initDropDownLeft:(NSMutableArray*)arrayLeft
-      arrayDropDownRight:(NSMutableArray*)arrayRight isCheckMark:(BOOL)checkmark isCenter:(BOOL)center{
-
-    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
-    NSInteger width = UIDeviceOrientationIsLandscape(deviceOrientation) ? self.view.frame.size.height : self.view.frame.size.width;
-    int widthDropdownMenu = 167;
-    int heightForRow = 44;
-    int separatorRight = 5;
-    int percent = 50; //50%
-    
-    drop = [[DropDownMenuViewController alloc] initWithNibName:@"DropDownMenuViewController" bundle:nil];
-    drop.superView = self;
-    drop.delegate = self;
-    drop.isCheckMark = checkmark;
-    drop.heithForRow = heightForRow;
-    drop.view.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
-    
-    if (center) {
-        int pointx = 0;
-        int widthSelf = self.view.frame.size.width;
-        pointx = (widthSelf*percent)/100 - widthDropdownMenu/2;
-        
-        [drop.view setFrame:CGRectMake(pointx, -(heightForRow*[arrayLeft count]), widthDropdownMenu, (heightForRow*[arrayLeft count]+5))];
-        drop.isCenter = YES;
-    }else{
-        [drop.view setFrame:CGRectMake(width - widthDropdownMenu - separatorRight, -(heightForRow*[arrayLeft count]), widthDropdownMenu, (heightForRow*[arrayLeft count]+5))];
-        drop.isCenter = NO;
+- (void)initDropDownLeft:(DropDownMenuEntity*)menuEntity{
+    if (!drop) {
+        drop = [[DropDownMenuViewController alloc] initWithNibName:@"DropDownMenuViewController" bundle:nil];
+        drop.superView = self;
+        drop.delegate = self;
+        drop.view.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
+        [self.view addSubview:drop.view];
     }
-    if ([arrayLeft count]>0) {
-       [drop setArrayItemsLeft:[NSMutableArray arrayWithArray:arrayLeft]];
-    }
-    if ([arrayRight count]>0 && [arrayRight count]==[arrayLeft count]) {
-       [drop setArrayItemsRight:[NSMutableArray arrayWithArray:arrayRight]];
-    }
-    
-    [self.view addSubview:drop.view];    
-}
-
-- (void)actionDropDown{
-    [drop dropDownMenu];
+    [drop.view bringSubviewToFront:self.view];
+    [drop setValue:menuEntity];
 }
 
 - (void)didSelectIndexPath:(NSIndexPath*)indexPath{
     NSLog(@"indexPath: %@", indexPath);
 }
 
+- (void)actionDrop:(id)sender{
+    NSLog(@"tag: %d", [sender tag]);
+    DropDownMenuEntity *menuEntity = [menuModel.arrayMenu objectAtIndex:[sender tag]];
+    [self initDropDownLeft:menuEntity];
+}
+
+- (void)didSelectOpen:(DropDownMenuEntity*)menuEntity{
+    NSMutableArray *array = menuModel.arrayMenu;
+    for (DropDownMenuEntity *entity in array) {
+        if ([entity.type isEqualToString:menuEntity.type]) {
+            entity.isOpen = menuEntity.isOpen;
+        }else{
+            entity.isOpen = NO;
+        }
+    }
+}
+- (void)didSelectClose:(DropDownMenuEntity*)menuEntity{
+    NSMutableArray *array = menuModel.arrayMenu;
+    for (DropDownMenuEntity *entity in array) {
+        if ([entity.type isEqualToString:menuEntity.type]) {
+            entity.isOpen = menuEntity.isOpen;
+        }else{
+            entity.isOpen = NO;
+        }
+    }
+}
+
 #pragma End DropDown menu
+
+- (void)initModel{
+    NSArray *arrayLableLeft = @[@"menu 1", @"menu 2", @"menu 3", @"menu 4", @"menu 5", @"menu 6", @"menu 7", @"menu 8", @"menu 9"];
+    NSArray *arrayLableRight = @[@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9"];
+    menuModel = [[DropDownMenuModel alloc] init];
+        
+    DropDownMenuEntity *dropEntity = [[DropDownMenuEntity alloc] init];
+    dropEntity.arrayItemsLeft = [NSMutableArray arrayWithArray:arrayLableLeft];
+    dropEntity.arrayItemsRight = [NSMutableArray arrayWithArray:arrayLableRight];
+    dropEntity.isCheckMark = NO;
+    dropEntity.isCenter = NO;
+    dropEntity.heithForRow = 44;
+    dropEntity.separatorLeft = 5;
+    dropEntity.widthDropdownMenu = 167;
+    dropEntity.percent = 50;
+    dropEntity.type = @"0";
+    dropEntity.isOpen = NO;
+    dropEntity.lastIndexPath = nil;
+    [menuModel.arrayMenu addObject:dropEntity];
+    
+    
+    NSArray *arrayLableLeft1 = @[@"menu 1", @"menu 2", @"menu 3"];
+    DropDownMenuEntity *dropEntity1 = [[DropDownMenuEntity alloc] init];
+    dropEntity1.arrayItemsLeft = [NSMutableArray arrayWithArray:arrayLableLeft1];
+    dropEntity1.arrayItemsRight = nil;
+    dropEntity1.isCheckMark = YES;
+    dropEntity1.isCenter = NO;
+    dropEntity1.heithForRow = 44;
+    dropEntity1.separatorLeft = 5;
+    dropEntity1.widthDropdownMenu = 167;
+    dropEntity1.percent = 50;
+    dropEntity1.type = @"1";
+    dropEntity1.isOpen = NO;
+    dropEntity1.lastIndexPath = nil;
+    [menuModel.arrayMenu addObject:dropEntity1];
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self initDropDown];
-    
-    [[[UIAlertView alloc] initWithTitle:@"Confirmation"
-                                message:NSLocalizedString(@"BOOK_PURCHASE", @"Message")
-                               delegate:nil
-                      cancelButtonTitle:@"OK"
-                      otherButtonTitles:nil] show];
+    [self initModel];
+    [self setRightButtonItem];
+    UIView *viewxxx = [[UIView alloc] initWithFrame:self.view.frame];
+    [viewxxx setBackgroundColor:[UIColor grayColor]];
+    [self.view addSubview:viewxxx];
 }
 
 @end

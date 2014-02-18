@@ -8,6 +8,7 @@
 
 #import "DropDownMenuViewController.h"
 #import "CellCustomDropDownMenu.h"
+#import "DropDownMenuEntity.h"
 
 @interface DropDownMenuViewController ()
 @property UIButton *buttonDropDown;
@@ -15,8 +16,8 @@
 @end
 
 @implementation DropDownMenuViewController
-@synthesize arrayItemsLeft, arrayItemsRight, superView;
-@synthesize lastIndexPath, isCheckMark, separatorLeft, isCenter;
+//@synthesize arrayItemsLeft, arrayItemsRight, superView;
+//@synthesize lastIndexPath, isCheckMark, separatorLeft, isCenter;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -40,7 +41,7 @@
     self.arrayItemsRight = [[NSMutableArray alloc] init];
     self.view.layer.cornerRadius = 2.0;
     self.view.layer.masksToBounds = YES;
-    
+    self.dropEntity = [[DropDownMenuEntity alloc] init];
     [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(orientationChanged:)
@@ -53,32 +54,100 @@
     [super viewDidUnload];
 }
 
+- (void)setValue:(DropDownMenuEntity*)menuEntity{
+    self.dropEntity = menuEntity;
+    NSInteger width = [self getWidthView];
+    if (menuEntity.isCenter) {
+        int pointx = 0;
+        int widthSelf = self.view.frame.size.width;
+        pointx = (widthSelf*self.dropEntity.percent)/100 - self.dropEntity.widthDropdownMenu/2;
+        [self.view setFrame:CGRectMake(pointx, -(self.dropEntity.heithForRow*[menuEntity.arrayItemsLeft count]), self.dropEntity.widthDropdownMenu, (self.dropEntity.heithForRow*[menuEntity.arrayItemsLeft count]+5))];
+    }else{
+        [self.view setFrame:CGRectMake(width - self.dropEntity.widthDropdownMenu - self.dropEntity.separatorLeft, -(self.dropEntity.heithForRow*[menuEntity.arrayItemsLeft count]), self.dropEntity.widthDropdownMenu, (self.dropEntity.heithForRow*[menuEntity.arrayItemsLeft count]+5))];
+    }
+    if ([menuEntity.arrayItemsLeft count]>0) {
+        [self setArrayItemsLeft:[NSMutableArray arrayWithArray:menuEntity.arrayItemsLeft]];
+    }
+    if ([menuEntity.arrayItemsRight count]>0 && [menuEntity.arrayItemsRight count]==[menuEntity.arrayItemsLeft count]) {
+        [self setArrayItemsRight:[NSMutableArray arrayWithArray:menuEntity.arrayItemsRight]];
+    }
+    [[self tableView] reloadData];
+    if (!self.dropEntity.isOpen) {
+        [self actionOpenMenu:self.dropEntity];
+    }else{
+        [self actionCloseMenu:self.dropEntity];
+    }
+}
+
+- (void)actionOpenMenu:(DropDownMenuEntity*)menuEntity{
+    menuEntity.isOpen = YES;
+    if ([self.delegate respondsToSelector:@selector(didSelectOpen:)]) {
+        [self.delegate didSelectOpen:menuEntity];
+    }
+    self.view.frame = CGRectMake(self.view.frame.origin.x, -self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
+    [self animation:CGRectMake(self.view.frame.origin.x, 8, self.view.frame.size.width, self.view.frame.size.height)];
+}
+
+- (void)actionCloseMenu:(DropDownMenuEntity*)menuEntity{
+    menuEntity.isOpen = NO;
+    if ([self.delegate respondsToSelector:@selector(didSelectClose:)]) {
+        [self.delegate didSelectClose:menuEntity];
+    }
+    [self animation:CGRectMake(self.view.frame.origin.x, -self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height)];
+}
+
+
+- (void)animation:(CGRect)frameCurrent{
+    [UIView animateWithDuration:0.5
+                          delay:0.0
+                        options:UIViewAnimationOptionCurveEaseIn // See other options
+                     animations:^{
+                         [self.view setFrame:frameCurrent];
+                     }
+                     completion:^(BOOL finished) {
+                         // Completion Block
+                         self.isStart = YES;
+                     }];
+}
+
+- (NSInteger)getWidthView{
+    UIDeviceOrientation deviceOrientation = [UIDevice currentDevice].orientation;
+    CGRect screenRect = [[UIScreen mainScreen] bounds];
+    NSInteger width = 0;
+    if (UIDeviceOrientationIsLandscape(deviceOrientation)) {
+        width = screenRect.size.height;
+    }else{
+        width = screenRect.size.width;
+    }
+    return width;
+}
+
 - (void)orientationChanged:(NSNotification *)notification{
-    [self shoutLandscape:superView.view.frame.size.width];
+    [self shoutLandscape:[self getWidthView]];
 }
 
 - (void)shoutLandscape:(float)width{
     CGRect frameSelf = self.view.frame;
-    if (isCenter) {
+    if (self.isCenter) {
        frameSelf.origin.x = [self caculatorPointX:50];
     }else{
-        frameSelf.origin.x = superView.view.frame.size.width - self.view.frame.size.width - 5;
+        frameSelf.origin.x = width - self.view.frame.size.width - 5;
     }
-    if (self.view.frame.size.height>superView.view.frame.size.height) {
-        frameSelf.size.height = superView.view.frame.size.height;
+    if (self.view.frame.size.height>320-44-8) {
+        frameSelf.size.height = 320-44-8;
     }else{
-        frameSelf.size.height = self.arrayItemsLeft.count*self.heithForRow;
+        frameSelf.size.height = self.arrayItemsLeft.count*self.dropEntity.heithForRow;
     }
     self.view.frame = frameSelf;
     
-    if (self.buttonDropDown.tag==0) {
+    if (!self.dropEntity.isOpen) {
         self.view.frame = CGRectMake(self.view.frame.origin.x, -self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
     }
 }
 
 - (int)caculatorPointX:(int)percent{
     float pointx = 0;
-    int widthSelf = superView.view.frame.size.width;
+    int widthSelf = self.superView.view.frame.size.width;
     pointx = (widthSelf*percent)/100 - self.view.frame.size.width/2;
     return pointx;
 }
@@ -93,7 +162,7 @@
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return self.heithForRow;
+    return self.dropEntity.heithForRow;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -113,14 +182,16 @@
     }
     if (indexPath.row<self.arrayItemsLeft.count-1) {
         UIImageView *imgView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"line_dropdown_menu.png"]];
-        imgView.frame = CGRectMake(0, self.heithForRow-1, self.view.frame.size.width, 1);
+        imgView.frame = CGRectMake(0, self.dropEntity.heithForRow-1, self.view.frame.size.width, 1);
         [cell.contentView addSubview:imgView];
     }
-    if (isCheckMark) {
+    if (self.dropEntity.isCheckMark) {
         [[UITableViewCell appearance] setTintColor:[UIColor whiteColor]];
         NSUInteger row = [indexPath row];
         NSUInteger oldRow = [lastIndexPath row];
         cell.accessoryType = (row == oldRow && lastIndexPath!=nil)?UITableViewCellAccessoryCheckmark:UITableViewCellAccessoryNone;
+    }else{
+        cell.accessoryType = UITableViewCellAccessoryNone;
     }
     return cell;
 }
@@ -129,7 +200,7 @@
     if ([self.delegate respondsToSelector:@selector(didSelectIndexPath:)]) {
         [self.delegate didSelectIndexPath:indexPath];
     }
-    if (isCheckMark) {
+    if (self.dropEntity.isCheckMark) {
         int newRow = [indexPath row];
         int oldRow = lastIndexPath!=nil?[lastIndexPath row]:-1;
         if (newRow!=oldRow) {
@@ -142,40 +213,8 @@
         }
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-    [self dropDownMenu];
+    [self actionCloseMenu:self.dropEntity];
 }
-
-- (void)dropDownMenu{
-    if (self.isStart) {
-        self.isStart = NO;
-        if (!self.buttonDropDown.tag) {
-            self.buttonDropDown.tag = 1;
-        }else{
-            self.buttonDropDown.tag = 0;
-        }
-        
-        if (self.buttonDropDown.tag==1) {
-            [self animation:CGRectMake(self.view.frame.origin.x, 8, self.view.frame.size.width, self.view.frame.size.height)];
-        }else{
-            [self animation:CGRectMake(self.view.frame.origin.x, -self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height)];
-        }
-    }
-}
-
-- (void)animation:(CGRect)frameCurrent{
-    [UIView animateWithDuration:0.5
-                          delay:0.0
-                        options:UIViewAnimationOptionCurveEaseIn // See other options
-                     animations:^{
-                         [self.view setFrame:frameCurrent];
-                     }
-                     completion:^(BOOL finished) {
-                         // Completion Block
-                         self.isStart = YES;
-                     }];
-}
-
-
 
 - (void)didReceiveMemoryWarning
 {

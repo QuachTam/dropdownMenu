@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "DropDownMenuViewController.h"
+@class DropDownMenuModel;
 @interface MainViewController : UIViewController<DropDownMenuViewControllerDelegate>{
     DropDownMenuViewController *drop;
+    DropDownMenuModel *menuModel;
 }
 
 @end
