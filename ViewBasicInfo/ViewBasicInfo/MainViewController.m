@@ -30,15 +30,12 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self initModel];
+    [self initModelMenuDropDown];
     [self setRightButtonItem];
     UIView *viewxxx = [[UIView alloc] initWithFrame:self.view.frame];
     [viewxxx setBackgroundColor:[UIColor grayColor]];
     [self.view addSubview:viewxxx];
 }
-
-
-#pragma Start DropDown menu
 
 - (void)setRightButtonItem{
     UIButton *rightButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 30)];
@@ -56,7 +53,29 @@
     self.navigationItem.rightBarButtonItems = @[barRightButtonItem, pdfButtonItem];
 }
 
-- (void)initDropDownLeft:(DropDownMenuEntity*)menuEntity{
+#pragma Start DropDown menu
+
+- (void)initModelMenuDropDown{
+    NSArray *arrayLableLeft = @[@"menu 1", @"menu 2", @"menu 3", @"menu 4", @"menu 5", @"menu 6", @"menu 7", @"menu 8", @"menu 9"];
+    NSArray *arrayLableRight = @[@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9"];
+    menuModel = [[DropDownMenuModel alloc] init];
+    
+    DropDownMenuEntity *dropEntity = [[DropDownMenuEntity alloc] init];
+    dropEntity.arrayItemsLeft = [NSMutableArray arrayWithArray:arrayLableLeft];
+    dropEntity.arrayItemsRight = [NSMutableArray arrayWithArray:arrayLableRight];
+    dropEntity.type = @"0";
+    [menuModel.arrayMenu addObject:dropEntity];
+    
+    NSArray *arrayLableLeft1 = @[@"menu 1", @"menu 2", @"menu 3"];
+    DropDownMenuEntity *dropEntity1 = [[DropDownMenuEntity alloc] init];
+    dropEntity1.arrayItemsLeft = [NSMutableArray arrayWithArray:arrayLableLeft1];
+    dropEntity1.isCheckMark = YES;
+    dropEntity1.isCenter = YES;
+    dropEntity1.type = @"1";
+    [menuModel.arrayMenu addObject:dropEntity1];
+}
+
+- (void)dropDownMenu:(DropDownMenuEntity*)menuEntity{
     if (!drop) {
         drop = [[DropDownMenuViewController alloc] initWithNibName:@"DropDownMenuViewController" bundle:nil];
         drop.superView = self;
@@ -68,14 +87,10 @@
     [drop setValue:menuEntity];
 }
 
-- (void)didSelectIndexPath:(NSIndexPath*)indexPath{
-    NSLog(@"indexPath: %@", indexPath);
-}
-
 - (void)actionDrop:(id)sender{
     UIButton *buttonTemp  = sender;
     DropDownMenuEntity *menuEntity = [menuModel.arrayMenu objectAtIndex:[buttonTemp tag]];
-    [self initDropDownLeft:menuEntity];
+    [self dropDownMenu:menuEntity];
 }
 
 - (void)didSelectOpen:(DropDownMenuEntity*)menuEntity{
@@ -96,25 +111,10 @@
     }
 }
 
-- (void)initModel{
-    NSArray *arrayLableLeft = @[@"menu 1", @"menu 2", @"menu 3", @"menu 4", @"menu 5", @"menu 6", @"menu 7", @"menu 8", @"menu 9"];
-    NSArray *arrayLableRight = @[@"1", @"2", @"3", @"4", @"5", @"6", @"7", @"8", @"9"];
-    menuModel = [[DropDownMenuModel alloc] init];
-        
-    DropDownMenuEntity *dropEntity = [[DropDownMenuEntity alloc] init];
-    dropEntity.arrayItemsLeft = [NSMutableArray arrayWithArray:arrayLableLeft];
-    dropEntity.arrayItemsRight = [NSMutableArray arrayWithArray:arrayLableRight];
-    dropEntity.type = @"0";
-    [menuModel.arrayMenu addObject:dropEntity];
-    
-    NSArray *arrayLableLeft1 = @[@"menu 1", @"menu 2", @"menu 3"];
-    DropDownMenuEntity *dropEntity1 = [[DropDownMenuEntity alloc] init];
-    dropEntity1.arrayItemsLeft = [NSMutableArray arrayWithArray:arrayLableLeft1];
-    dropEntity1.isCheckMark = YES;
-    dropEntity1.isCenter = YES;
-    dropEntity1.type = @"1";
-    [menuModel.arrayMenu addObject:dropEntity1];
+- (void)didSelectIndexPath:(NSIndexPath*)indexPath{
+    NSLog(@"indexPath: %@", indexPath);
 }
+
 #pragma End DropDown menu
 
 @end

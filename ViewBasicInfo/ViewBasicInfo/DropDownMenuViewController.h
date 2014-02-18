@@ -19,10 +19,6 @@
 
 @property (retain, nonatomic) NSMutableArray *arrayItemsLeft;
 @property (retain, nonatomic) NSMutableArray *arrayItemsRight;
-@property (nonatomic, readwrite) int heithForRow;
-@property (nonatomic, readwrite) int separatorLeft;
-@property (nonatomic, readwrite) BOOL isCheckMark;
-@property (nonatomic, readwrite) BOOL isCenter;
 
 - (void)actionOpenMenu:(DropDownMenuEntity*)menuEntity;
 - (void)actionCloseMenu:(DropDownMenuEntity*)menuEntity;

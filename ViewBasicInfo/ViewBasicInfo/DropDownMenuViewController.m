@@ -50,6 +50,7 @@
 
 - (void)setValue:(DropDownMenuEntity*)menuEntity{
     self.dropEntity = menuEntity;
+    
     NSInteger width = [self getWidthView];
     if (menuEntity.isCenter) {
         int pointx = 0;
@@ -60,9 +61,13 @@
     }
     if ([menuEntity.arrayItemsLeft count]>0) {
         [self setArrayItemsLeft:[NSMutableArray arrayWithArray:menuEntity.arrayItemsLeft]];
+    }else{
+        [self setArrayItemsLeft:nil];
     }
     if ([menuEntity.arrayItemsRight count]>0 && [menuEntity.arrayItemsRight count]==[menuEntity.arrayItemsLeft count]) {
         [self setArrayItemsRight:[NSMutableArray arrayWithArray:menuEntity.arrayItemsRight]];
+    }else{
+        [self setArrayItemsRight:nil];
     }
     [[self tableView] reloadData];
     if (!self.dropEntity.isOpen) {

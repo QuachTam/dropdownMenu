@@ -126,6 +126,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6E295EAB18B33FA900433166 /* DropDownMenu */ = {
+			isa = PBXGroup;
+			children = (
+				6E1B842618ACD60C00E6655D /* CellCustomDropDownMenu.h */,
+				6E1B842718ACD60C00E6655D /* CellCustomDropDownMenu.m */,
+				6E1B842B18ACD65300E6655D /* CellCustomDropDownMenu.xib */,
+				6E1B842118ACD18C00E6655D /* DropDownMenuViewController.h */,
+				6E1B842218ACD18C00E6655D /* DropDownMenuViewController.m */,
+				6E1B842318ACD18C00E6655D /* DropDownMenuViewController.xib */,
+				6ED44CEE18B230CE00B63638 /* DropDownMenuModel.h */,
+				6ED44CEF18B230CE00B63638 /* DropDownMenuModel.m */,
+				6ED44CF118B235D100B63638 /* DropDownMenuEntity.h */,
+				6ED44CF218B235D100B63638 /* DropDownMenuEntity.m */,
+			);
+			name = DropDownMenu;
+			sourceTree = "<group>";
+		};
 		6E42C6B418ACAF5D0077D2CC = {
 			isa = PBXGroup;
 			children = (
@@ -164,16 +181,7 @@
 				6E42C6EF18ACAF740077D2CC /* MainViewController.h */,
 				6E42C6F018ACAF740077D2CC /* MainViewController.m */,
 				6E42C6F118ACAF740077D2CC /* MainViewController.xib */,
-				6E1B842618ACD60C00E6655D /* CellCustomDropDownMenu.h */,
-				6E1B842718ACD60C00E6655D /* CellCustomDropDownMenu.m */,
-				6E1B842B18ACD65300E6655D /* CellCustomDropDownMenu.xib */,
-				6E1B842118ACD18C00E6655D /* DropDownMenuViewController.h */,
-				6E1B842218ACD18C00E6655D /* DropDownMenuViewController.m */,
-				6E1B842318ACD18C00E6655D /* DropDownMenuViewController.xib */,
-				6ED44CEE18B230CE00B63638 /* DropDownMenuModel.h */,
-				6ED44CEF18B230CE00B63638 /* DropDownMenuModel.m */,
-				6ED44CF118B235D100B63638 /* DropDownMenuEntity.h */,
-				6ED44CF218B235D100B63638 /* DropDownMenuEntity.m */,
+				6E295EAB18B33FA900433166 /* DropDownMenu */,
 				6E42C6D218ACAF5D0077D2CC /* Images.xcassets */,
 				6E42C6C718ACAF5D0077D2CC /* Supporting Files */,
 			);
