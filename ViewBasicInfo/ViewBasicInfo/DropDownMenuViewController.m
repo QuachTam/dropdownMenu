@@ -127,7 +127,7 @@
     CGRect frameSelf = self.view.frame;
     CGRect superFrame  = self.superView.view.frame;
     if (self.dropEntity.isCenter) {
-       frameSelf.origin.x = [self caculatorPointX:self.dropEntity.percent];
+       frameSelf.origin.x = [self caculatorFrameScreen:self.dropEntity.percent];
     }else{
         frameSelf.origin.x = width - self.view.frame.size.width - 5;
     }
@@ -143,11 +143,11 @@
     }
 }
 
-- (int)caculatorPointX:(int)percent{
-    float pointx = 0;
+- (int)caculatorFrameScreen:(int)percent{
+    float point = 0;
     int width = [self getWidthView];
-    pointx = (width*percent)/100 - self.view.frame.size.width/2;
-    return pointx;
+    point = (width*percent)/100 - self.view.frame.size.width/2;
+    return point;
 }
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
