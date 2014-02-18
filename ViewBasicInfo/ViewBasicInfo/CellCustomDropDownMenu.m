@@ -36,15 +36,13 @@
 }
 
 - (void)setValueLabeRight:(NSString*)value{
-    NSLog(@"right: %@", value);
     self.lableRight.text = value;
-    self.lableRight.accessibilityLabel = value;
+    self.accessibilityLabel = value;
 }
 
 - (void)setValueLableLeft:(NSString*)value{
-    NSLog(@"left: %@", value);
     self.lableLeft.text = value;
-    self.lableLeft.accessibilityLabel = value;
+    self.accessibilityLabel = value;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

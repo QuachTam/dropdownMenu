@@ -11,13 +11,10 @@
 #import "DropDownMenuEntity.h"
 
 @interface DropDownMenuViewController ()
-@property UIButton *buttonDropDown;
-@property BOOL isStart;
+
 @end
 
 @implementation DropDownMenuViewController
-//@synthesize arrayItemsLeft, arrayItemsRight, superView;
-//@synthesize lastIndexPath, isCheckMark, separatorLeft, isCenter;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -25,7 +22,7 @@
     if (self) {
         // Custom initialization
         self.view.accessibilityIdentifier = @"accessibility_DropDownMenuViewController";
-        self.tableView.accessibilityLabel = @"accessibilityLabel_TableView_DropDownMenuViewController";
+        self.tableView.accessibilityIdentifier = @"accessibilityLabel_TableView_DropDownMenuViewController";
     }
     return self;
 }
@@ -34,9 +31,6 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.buttonDropDown = [[UIButton alloc] init];
-    self.buttonDropDown.tag = 0;
-    self.isStart = YES;
     self.arrayItemsLeft = [[NSMutableArray alloc] init];
     self.arrayItemsRight = [[NSMutableArray alloc] init];
     self.view.layer.cornerRadius = 2.0;
@@ -105,7 +99,6 @@
                      }
                      completion:^(BOOL finished) {
                          // Completion Block
-                         self.isStart = YES;
                      }];
 }
 
