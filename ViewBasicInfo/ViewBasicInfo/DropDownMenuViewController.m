@@ -24,7 +24,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        self.accessibilityLabel = @"accessibility_DropDownMenuViewController";
+        self.view.accessibilityIdentifier = @"accessibility_DropDownMenuViewController";
         self.tableView.accessibilityLabel = @"accessibilityLabel_TableView_DropDownMenuViewController";
     }
     return self;
@@ -59,8 +59,7 @@
     NSInteger width = [self getWidthView];
     if (menuEntity.isCenter) {
         int pointx = 0;
-        int widthSelf = self.view.frame.size.width;
-        pointx = (widthSelf*self.dropEntity.percent)/100 - self.dropEntity.widthDropdownMenu/2;
+        pointx = (width*self.dropEntity.percent)/100 - self.dropEntity.widthDropdownMenu/2;
         [self.view setFrame:CGRectMake(pointx, -(self.dropEntity.heithForRow*[menuEntity.arrayItemsLeft count]), self.dropEntity.widthDropdownMenu, (self.dropEntity.heithForRow*[menuEntity.arrayItemsLeft count]+5))];
     }else{
         [self.view setFrame:CGRectMake(width - self.dropEntity.widthDropdownMenu - self.dropEntity.separatorLeft, -(self.dropEntity.heithForRow*[menuEntity.arrayItemsLeft count]), self.dropEntity.widthDropdownMenu, (self.dropEntity.heithForRow*[menuEntity.arrayItemsLeft count]+5))];
@@ -85,7 +84,7 @@
         [self.delegate didSelectOpen:menuEntity];
     }
     self.view.frame = CGRectMake(self.view.frame.origin.x, -self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
-    [self animation:CGRectMake(self.view.frame.origin.x, 8, self.view.frame.size.width, self.view.frame.size.height)];
+    [self animation:CGRectMake(self.view.frame.origin.x, self.dropEntity.separaterTop, self.view.frame.size.width, self.view.frame.size.height)];
 }
 
 - (void)actionCloseMenu:(DropDownMenuEntity*)menuEntity{
@@ -128,13 +127,14 @@
 
 - (void)shoutLandscape:(float)width{
     CGRect frameSelf = self.view.frame;
-    if (self.isCenter) {
-       frameSelf.origin.x = [self caculatorPointX:50];
+    CGRect superFrame  = self.superView.view.frame;
+    if (self.dropEntity.isCenter) {
+       frameSelf.origin.x = [self caculatorPointX:self.dropEntity.percent];
     }else{
         frameSelf.origin.x = width - self.view.frame.size.width - 5;
     }
-    if (self.view.frame.size.height>320-44-8) {
-        frameSelf.size.height = 320-44-8;
+    if (self.view.frame.size.height>superFrame.size.height) {
+        frameSelf.size.height = superFrame.size.height;
     }else{
         frameSelf.size.height = self.arrayItemsLeft.count*self.dropEntity.heithForRow;
     }
@@ -147,8 +147,8 @@
 
 - (int)caculatorPointX:(int)percent{
     float pointx = 0;
-    int widthSelf = self.superView.view.frame.size.width;
-    pointx = (widthSelf*percent)/100 - self.view.frame.size.width/2;
+    int width = [self getWidthView];
+    pointx = (width*percent)/100 - self.view.frame.size.width/2;
     return pointx;
 }
 
@@ -188,8 +188,8 @@
     if (self.dropEntity.isCheckMark) {
         [[UITableViewCell appearance] setTintColor:[UIColor whiteColor]];
         NSUInteger row = [indexPath row];
-        NSUInteger oldRow = [lastIndexPath row];
-        cell.accessoryType = (row == oldRow && lastIndexPath!=nil)?UITableViewCellAccessoryCheckmark:UITableViewCellAccessoryNone;
+        NSUInteger oldRow = [self.lastIndexPath row];
+        cell.accessoryType = (row == oldRow && self.lastIndexPath!=nil)?UITableViewCellAccessoryCheckmark:UITableViewCellAccessoryNone;
     }else{
         cell.accessoryType = UITableViewCellAccessoryNone;
     }
@@ -202,14 +202,14 @@
     }
     if (self.dropEntity.isCheckMark) {
         int newRow = [indexPath row];
-        int oldRow = lastIndexPath!=nil?[lastIndexPath row]:-1;
+        int oldRow = self.lastIndexPath!=nil?[self.lastIndexPath row]:-1;
         if (newRow!=oldRow) {
             
             UITableViewCell *newCell = [self.tableView cellForRowAtIndexPath:indexPath];
             newCell.accessoryType = UITableViewCellAccessoryCheckmark;
-            UITableViewCell *oldCell = [self.tableView cellForRowAtIndexPath:lastIndexPath];
+            UITableViewCell *oldCell = [self.tableView cellForRowAtIndexPath:self.lastIndexPath];
             oldCell.accessoryType = UITableViewCellAccessoryNone;
-            lastIndexPath = indexPath;
+            self.lastIndexPath = indexPath;
         }
     }
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];

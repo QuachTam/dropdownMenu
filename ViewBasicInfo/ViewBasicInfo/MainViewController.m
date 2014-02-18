@@ -26,6 +26,18 @@
     return self;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    [self initModel];
+    [self setRightButtonItem];
+    UIView *viewxxx = [[UIView alloc] initWithFrame:self.view.frame];
+    [viewxxx setBackgroundColor:[UIColor grayColor]];
+    [self.view addSubview:viewxxx];
+}
+
+
 #pragma Start DropDown menu
 
 - (void)setRightButtonItem{
@@ -61,22 +73,19 @@
 }
 
 - (void)actionDrop:(id)sender{
-    NSLog(@"tag: %d", [sender tag]);
-    DropDownMenuEntity *menuEntity = [menuModel.arrayMenu objectAtIndex:[sender tag]];
+    UIButton *buttonTemp  = sender;
+    DropDownMenuEntity *menuEntity = [menuModel.arrayMenu objectAtIndex:[buttonTemp tag]];
     [self initDropDownLeft:menuEntity];
 }
 
 - (void)didSelectOpen:(DropDownMenuEntity*)menuEntity{
-    NSMutableArray *array = menuModel.arrayMenu;
-    for (DropDownMenuEntity *entity in array) {
-        if ([entity.type isEqualToString:menuEntity.type]) {
-            entity.isOpen = menuEntity.isOpen;
-        }else{
-            entity.isOpen = NO;
-        }
-    }
+    [self resetStatusMenu:menuEntity];
 }
 - (void)didSelectClose:(DropDownMenuEntity*)menuEntity{
+    [self resetStatusMenu:menuEntity];
+}
+
+- (void)resetStatusMenu:(DropDownMenuEntity*)menuEntity{
     NSMutableArray *array = menuModel.arrayMenu;
     for (DropDownMenuEntity *entity in array) {
         if ([entity.type isEqualToString:menuEntity.type]) {
@@ -86,8 +95,6 @@
         }
     }
 }
-
-#pragma End DropDown menu
 
 - (void)initModel{
     NSArray *arrayLableLeft = @[@"menu 1", @"menu 2", @"menu 3", @"menu 4", @"menu 5", @"menu 6", @"menu 7", @"menu 8", @"menu 9"];
@@ -97,43 +104,17 @@
     DropDownMenuEntity *dropEntity = [[DropDownMenuEntity alloc] init];
     dropEntity.arrayItemsLeft = [NSMutableArray arrayWithArray:arrayLableLeft];
     dropEntity.arrayItemsRight = [NSMutableArray arrayWithArray:arrayLableRight];
-    dropEntity.isCheckMark = NO;
-    dropEntity.isCenter = NO;
-    dropEntity.heithForRow = 44;
-    dropEntity.separatorLeft = 5;
-    dropEntity.widthDropdownMenu = 167;
-    dropEntity.percent = 50;
     dropEntity.type = @"0";
-    dropEntity.isOpen = NO;
-    dropEntity.lastIndexPath = nil;
     [menuModel.arrayMenu addObject:dropEntity];
-    
     
     NSArray *arrayLableLeft1 = @[@"menu 1", @"menu 2", @"menu 3"];
     DropDownMenuEntity *dropEntity1 = [[DropDownMenuEntity alloc] init];
     dropEntity1.arrayItemsLeft = [NSMutableArray arrayWithArray:arrayLableLeft1];
-    dropEntity1.arrayItemsRight = nil;
     dropEntity1.isCheckMark = YES;
-    dropEntity1.isCenter = NO;
-    dropEntity1.heithForRow = 44;
-    dropEntity1.separatorLeft = 5;
-    dropEntity1.widthDropdownMenu = 167;
-    dropEntity1.percent = 50;
+    dropEntity1.isCenter = YES;
     dropEntity1.type = @"1";
-    dropEntity1.isOpen = NO;
-    dropEntity1.lastIndexPath = nil;
     [menuModel.arrayMenu addObject:dropEntity1];
 }
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-    [self initModel];
-    [self setRightButtonItem];
-    UIView *viewxxx = [[UIView alloc] initWithFrame:self.view.frame];
-    [viewxxx setBackgroundColor:[UIColor grayColor]];
-    [self.view addSubview:viewxxx];
-}
+#pragma End DropDown menu
 
 @end

@@ -16,10 +16,10 @@
 @property (nonatomic, readwrite) int separatorLeft;
 @property (nonatomic, readwrite) int percent;
 @property (nonatomic, readwrite) int widthDropdownMenu;
+@property (nonatomic, readwrite) int separaterTop;
 @property (nonatomic, readwrite) BOOL isCheckMark;
 @property (nonatomic, readwrite) BOOL isCenter;
 @property (nonatomic, readwrite) BOOL isOpen;
-@property (nonatomic, retain) NSIndexPath *lastIndexPath;
 @property (nonatomic, retain) NSString *type;
 
 @end

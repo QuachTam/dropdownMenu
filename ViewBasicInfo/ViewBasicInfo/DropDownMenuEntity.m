@@ -9,4 +9,22 @@
 #import "DropDownMenuEntity.h"
 
 @implementation DropDownMenuEntity
+
+- (id)init
+{
+    self = [super init];
+    if (self) {
+        self.isCheckMark = NO;
+        self.isCenter = NO;
+        self.isOpen = NO;
+        self.heithForRow = 44;
+        self.separatorLeft = 5;
+        self.separaterTop  = 8;
+        self.widthDropdownMenu = 167;
+        self.percent = 50;
+        self.arrayItemsRight = nil;
+    }
+    return self;
+}
+
 @end

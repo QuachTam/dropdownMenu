@@ -10,9 +10,7 @@
 
 @protocol DropDownMenuViewControllerDelegate;
 @class DropDownMenuEntity;
-@interface DropDownMenuViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>{
-    NSIndexPath *lastIndexPath;
-}
+@interface DropDownMenuViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
 @property (weak, nonatomic) id<DropDownMenuViewControllerDelegate> delegate;
 @property (nonatomic, retain) NSIndexPath *lastIndexPath;
 @property (retain, nonatomic) IBOutlet UITableView *tableView;
